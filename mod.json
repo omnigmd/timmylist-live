@@ -1,0 +1,25 @@
+{
+	"geode": "5.11.2",
+	"gd": {
+		"win": "*"
+	},
+	"id": "omnigmd.timmylist-live",
+	"name": "Timmylist Live",
+	"version": "v1.0.0",
+	"developer": "omnigmd",
+	"description": "Sends your best % and completions on The Timmylist's levels to your Timmylist account while you play.",
+	"settings": {
+		"link-code": {
+			"type": "string",
+			"name": "Link code",
+			"description": "Your link code from timmylist.org: Settings, Connected Accounts, Geometry Dash. Keep it private.",
+			"default": ""
+		},
+		"server": {
+			"type": "string",
+			"name": "Server",
+			"description": "Leave this as it is unless you run your own copy of the site.",
+			"default": "https://www.timmylist.org"
+		}
+	}
+}
