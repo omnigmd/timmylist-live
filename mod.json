@@ -5,15 +5,91 @@
 	},
 	"id": "omnigmd.timmylist-live",
 	"name": "Timmylist Live",
-	"version": "v1.0.0",
+	"version": "v2.0.0",
 	"developer": "omnigmd",
-	"description": "Sends your best % and completions on The Timmylist's levels to your Timmylist account while you play.",
+	"description": "Live progress for The Timmylist: sends your best % and completions, shows a level's Timmylist rank and points, and adds a Timmylist pop-up with your whole list.",
+	"tags": [
+		"online",
+		"utility",
+		"interface"
+	],
+	"links": {
+		"homepage": "https://www.timmylist.org",
+		"source": "https://github.com/omnigmd/timmylist-live"
+	},
+	"resources": {
+		"sprites": [
+			"resources/*.png"
+		]
+	},
 	"settings": {
 		"link-code": {
 			"type": "string",
 			"name": "Link code",
 			"description": "Your link code from timmylist.org: Settings, Connected Accounts, Geometry Dash. Keep it private.",
 			"default": ""
+		},
+		"sync-on-launch": {
+			"type": "bool",
+			"name": "Sync on launch",
+			"description": "When the game starts, send the best % you already have on Timmylist levels so earlier progress is saved too.",
+			"default": true
+		},
+		"notifications": {
+			"type": "bool",
+			"name": "Notifications",
+			"description": "Small notices when the link works or fails.",
+			"default": true
+		},
+		"completion-toast": {
+			"type": "bool",
+			"name": "Completion notice",
+			"description": "Show a notice when you complete a Timmylist level for the first time, with the points you earned.",
+			"default": true
+		},
+		"best-toast": {
+			"type": "bool",
+			"name": "New best notice",
+			"description": "Show a notice when you get a new best % on a Timmylist level.",
+			"default": false
+		},
+		"menu-button": {
+			"type": "bool",
+			"name": "Main menu button",
+			"description": "Add the Timmylist cube button to the main menu.",
+			"default": true
+		},
+		"badge": {
+			"type": "bool",
+			"name": "Level page badge",
+			"description": "Show a level's Timmylist rank, points and your best on its level page.",
+			"default": true
+		},
+		"hud": {
+			"type": "bool",
+			"name": "In-level display",
+			"description": "Show the level's Timmylist rank and your best % while you play.",
+			"default": true
+		},
+		"hud-position": {
+			"type": "string",
+			"name": "Display position",
+			"description": "Where the in-level display sits.",
+			"default": "Top Left",
+			"one-of": [
+				"Top Left",
+				"Top Right",
+				"Bottom Left",
+				"Bottom Right"
+			]
+		},
+		"hud-opacity": {
+			"type": "float",
+			"name": "Display opacity",
+			"description": "How visible the in-level display is.",
+			"default": 0.5,
+			"min": 0.1,
+			"max": 1.0
 		},
 		"server": {
 			"type": "string",
