@@ -1,3 +1,8 @@
+# v2.2.0
+- Uses the game's own art: the level progress bar sprite for every bar, extreme demon faces on each row, and the green check mark on levels you've beaten.
+- The level page badge shows the demon face next to the rank, and a check mark once you've completed it.
+- New logo in the Geode style, with the game's check mark in a progress ring.
+
 # v2.1.0
 - Your new logo is now the main menu button, and the level page button.
 - Redesigned pop-up in the Geode and GD style: bordered list, alternating rows, progress bars, and a bar for your overall progress.
