@@ -24,7 +24,7 @@ protected:
 
 		auto size = m_size;
 
-		auto cube = CCSprite::create("cube.png"_spr);
+		auto cube = CCSprite::create("logo.png"_spr);
 		if (cube) {
 			cube->setScale(0.2f);
 			cube->setPosition({ 28.f, size.height - 24.f });

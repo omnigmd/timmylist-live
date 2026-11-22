@@ -18,7 +18,7 @@ class $modify(TLMenuLayer, MenuLayer) {
 		if (tl::opt("menu-button")) {
 			auto* menu = this->getChildByID("bottom-menu");
 			if (menu) {
-				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				auto* spr = CircleButtonSprite::createWithSprite("logo.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [](CCMenuItemSpriteExtra*) {
 					tlOpenPopup();
 				});
@@ -61,7 +61,7 @@ class $modify(TLLevelInfoLayer, LevelInfoLayer) {
 			}
 
 			if (!layer->getChildByID("tl-level-button"_spr)) {
-				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				auto* spr = CircleButtonSprite::createWithSprite("logo.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [id](CCMenuItemSpriteExtra*) {
 					web::openLinkInBrowser(tl::base() + "/#/level/" + std::to_string(id));
 				});
