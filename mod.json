@@ -5,7 +5,7 @@
 	},
 	"id": "omnigmd.timmylist-live",
 	"name": "Timmy Tracker",
-	"version": "v2.0.0",
+	"version": "v2.1.0",
 	"developer": "omnigmd",
 	"description": "Tracks your Geometry Dash progress on The Timmylist: sends your best % and completions live, shows a level's rank and points, and adds a pop-up with your whole list.",
 	"tags": [
@@ -15,14 +15,24 @@
 	],
 	"links": {
 		"homepage": "https://www.timmylist.org",
-		"source": "https://github.com/omnigmd/timmylist-live"
+		"source": "https://github.com/omnigmd/timmylist-live",
+		"community": "https://www.timmylist.org"
+	},
+	"issues": {
+		"info": "Found a bug or have an idea? Open an issue on GitHub.",
+		"url": "https://github.com/omnigmd/timmylist-live/issues"
 	},
 	"resources": {
 		"sprites": [
-			"cube.png"
+			"cube.png",
+			"logo.png"
 		]
 	},
 	"settings": {
+		"title-account": {
+			"type": "title",
+			"name": "Account"
+		},
 		"link-code": {
 			"type": "string",
 			"name": "Link code",
@@ -35,6 +45,10 @@
 			"description": "When the game starts, send the best % you already have on Timmylist levels so earlier progress is saved too.",
 			"default": true
 		},
+		"title-notices": {
+			"type": "title",
+			"name": "Notices"
+		},
 		"notifications": {
 			"type": "bool",
 			"name": "Notifications",
@@ -43,20 +57,26 @@
 		},
 		"completion-toast": {
 			"type": "bool",
+			"enable-if": "notifications",
 			"name": "Completion notice",
 			"description": "Show a notice when you complete a Timmylist level for the first time, with the points you earned.",
 			"default": true
 		},
 		"best-toast": {
 			"type": "bool",
+			"enable-if": "notifications",
 			"name": "New best notice",
 			"description": "Show a notice when you get a new best % on a Timmylist level.",
 			"default": false
 		},
+		"title-ui": {
+			"type": "title",
+			"name": "Interface"
+		},
 		"menu-button": {
 			"type": "bool",
 			"name": "Main menu button",
-			"description": "Add the Timmy Tracker cube button to the main menu.",
+			"description": "Add the Timmy Tracker button to the main menu.",
 			"default": true
 		},
 		"badge": {
@@ -72,6 +92,7 @@
 			"default": true
 		},
 		"hud-position": {
+			"enable-if": "hud",
 			"type": "string",
 			"name": "Display position",
 			"description": "Where the in-level display sits.",
@@ -84,12 +105,17 @@
 			]
 		},
 		"hud-opacity": {
+			"enable-if": "hud",
 			"type": "float",
 			"name": "Display opacity",
 			"description": "How visible the in-level display is.",
 			"default": 0.5,
 			"min": 0.1,
 			"max": 1.0
+		},
+		"title-adv": {
+			"type": "title",
+			"name": "Advanced"
 		},
 		"server": {
 			"type": "string",

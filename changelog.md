@@ -1,3 +1,12 @@
+# v2.1.0
+- Your new logo is now the main menu button, and the level page button.
+- Redesigned pop-up in the Geode and GD style: bordered list, alternating rows, progress bars, and a bar for your overall progress.
+- Filter the list by All, To do and Done.
+- Tap a level in the list to open it.
+- Info button in the pop-up explaining how the mod works.
+- Settings are grouped into sections, and options that depend on others grey out when off.
+- Added an issues link so bugs can be reported from the mod page.
+
 # v2.0.0
 - Renamed to Timmy Tracker, with a new logo made from the Timmylist emblem.
 - Timmylist pop-up from the main menu: link status, completed levels, points and every level with your best %.
