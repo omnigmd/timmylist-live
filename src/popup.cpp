@@ -15,7 +15,7 @@ protected:
 	CCLabelBMFont* m_prog = nullptr;
 	CCLabelBMFont* m_when = nullptr;
 	CCLabelBMFont* m_empty = nullptr;
-	CCLayerColor* m_barFill = nullptr;
+	CCNode* m_barHolder = nullptr;
 	float m_barWidth = 0.f;
 	ButtonSprite* m_filterSpr[3] = { nullptr, nullptr, nullptr };
 	int m_filter = 0;   // 0 all, 1 to do, 2 done
@@ -60,17 +60,11 @@ protected:
 		m_prog->setPosition({ size.width / 2, size.height - 64.f });
 		m_mainLayer->addChild(m_prog);
 
-		// overall progress bar
-		m_barWidth = 240.f;
-		auto barBg = CCLayerColor::create(ccc4(0, 0, 0, 150), m_barWidth + 4.f, 10.f);
-		barBg->setPosition({ size.width / 2 - m_barWidth / 2 - 2.f, size.height - 84.f });
-		m_mainLayer->addChild(barBg);
-		auto barTrack = CCLayerColor::create(ccc4(255, 255, 255, 40), m_barWidth, 6.f);
-		barTrack->setPosition({ size.width / 2 - m_barWidth / 2, size.height - 82.f });
-		m_mainLayer->addChild(barTrack);
-		m_barFill = CCLayerColor::create(ccc4(46, 134, 255, 255), 1.f, 6.f);
-		m_barFill->setPosition({ size.width / 2 - m_barWidth / 2, size.height - 82.f });
-		m_mainLayer->addChild(m_barFill);
+		// overall progress bar (the game's own progress bar sprite)
+		m_barWidth = 250.f;
+		m_barHolder = CCNode::create();
+		m_barHolder->setPosition({ size.width / 2, size.height - 80.f });
+		m_mainLayer->addChild(m_barHolder);
 
 		// filters
 		char const* names[3] = { "All", "To do", "Done" };
@@ -155,10 +149,48 @@ protected:
 		CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
 	}
 
+	// the same white progress bar sprite the level page uses, tinted and clipped
+	static CCNode* gdBar(float w, float h, int pct, ccColor3B col) {
+		auto root = CCNode::create();
+		root->setContentSize({ w, h });
+		auto back = CCSprite::create("GJ_progressBar_001.png");
+		if (!back) return root;
+		auto sz = back->getContentSize();
+		if (sz.width <= 0.f || sz.height <= 0.f) return root;
+		float sx = w / sz.width, sy = h / sz.height;
+		back->setColor(ccc3(0, 0, 0));
+		back->setOpacity(130);
+		back->setScaleX(sx);
+		back->setScaleY(sy);
+		root->addChild(back);
+		if (pct > 0) {
+			auto front = CCSprite::create("GJ_progressBar_001.png");
+			if (front) {
+				float f = static_cast<float>(std::min(pct, 100)) / 100.f;
+				front->setColor(col);
+				front->setAnchorPoint({ 0.f, 0.5f });
+				front->setTextureRect(CCRect(0.f, 0.f, std::max(2.f, sz.width * f), sz.height));
+				front->setScaleX(sx * 0.985f);
+				front->setScaleY(sy * 0.8f);
+				front->setPosition({ -w / 2 + w * 0.0075f, 0.f });
+				root->addChild(front);
+			}
+		}
+		return root;
+	}
+
+	static CCSprite* frameIcon(char const* name, float height) {
+		auto spr = CCSprite::createWithSpriteFrameName(name);
+		if (!spr) return nullptr;
+		float h = spr->getContentSize().height;
+		if (h > 0.f) spr->setScale(height / h);
+		return spr;
+	}
+
 	CCNode* makeRow(tl::Info const& in, float w, int index) {
 		int best = tl::bestFor(in.id);
 		bool done = best >= 100;
-		float h = 26.f;
+		float h = 28.f;
 
 		auto menu = CCMenu::create();
 		menu->setContentSize({ w, h });
@@ -169,27 +201,38 @@ protected:
 		bg->setPosition({ 0.f, 0.f });
 		menu->addChild(bg);
 
+		// extreme demon face from the game's own sheet, dim until you beat the level
+		if (auto face = frameIcon("diffIcon_10_btn_001.png", 22.f)) {
+			face->setPosition({ 18.f, h / 2 });
+			if (!done) {
+				face->setColor(ccc3(150, 150, 150));
+				face->setOpacity(170);
+			}
+			menu->addChild(face);
+		}
+
 		auto rank = CCLabelBMFont::create(("#" + std::to_string(in.rank)).c_str(), "goldFont.fnt");
 		rank->setScale(0.45f);
 		rank->setAnchorPoint({ 0.f, 0.5f });
-		rank->setPosition({ 8.f, h / 2 });
+		rank->setPosition({ 36.f, h / 2 });
 		menu->addChild(rank);
 
 		auto name = CCLabelBMFont::create(in.name.c_str(), "bigFont.fnt");
 		name->setAnchorPoint({ 0.f, 0.5f });
-		name->setPosition({ 46.f, h / 2 });
-		name->limitLabelWidth(w - 46.f - 150.f, 0.4f, 0.1f);
+		name->setPosition({ 74.f, h / 2 });
+		name->limitLabelWidth(w - 74.f - 156.f, 0.4f, 0.1f);
 		menu->addChild(name);
 
-		// progress bar
-		float bw = 74.f, bx = w - 140.f;
-		auto track = CCLayerColor::create(ccc4(255, 255, 255, 45), bw, 6.f);
-		track->setPosition({ bx, h / 2 - 3.f });
-		menu->addChild(track);
-		if (best > 0) {
-			auto fill = CCLayerColor::create(done ? ccc4(90, 235, 140, 255) : ccc4(46, 134, 255, 255), std::max(2.f, bw * std::min(best, 100) / 100.f), 6.f);
-			fill->setPosition({ bx, h / 2 - 3.f });
-			menu->addChild(fill);
+		// progress bar, with the game's check mark in front of it once the level is beaten
+		float bw = 78.f, bx = w - 52.f - bw;
+		auto bar = gdBar(bw, 10.f, best, done ? ccc3(70, 230, 120) : ccc3(46, 134, 255));
+		bar->setPosition({ bx + bw / 2, h / 2 });
+		menu->addChild(bar);
+		if (done) {
+			if (auto chk = frameIcon("GJ_completesIcon_001.png", 16.f)) {
+				chk->setPosition({ bx - 12.f, h / 2 });
+				menu->addChild(chk);
+			}
 		}
 
 		std::string right = best > 0 ? (std::to_string(best) + "%") : "-";
@@ -240,7 +283,8 @@ public:
 		m_prog->limitLabelWidth(m_size.width - 40.f, 0.5f, 0.1f);
 
 		float ratio = total > 0 ? std::min(1.f, static_cast<float>(tl::g_done) / static_cast<float>(total)) : 0.f;
-		m_barFill->setContentSize({ std::max(1.f, m_barWidth * ratio), 6.f });
+		m_barHolder->removeAllChildren();
+		m_barHolder->addChild(gdBar(m_barWidth, 14.f, static_cast<int>(ratio * 100.f + 0.5f), ccc3(70, 230, 120)));
 
 		std::string w;
 		if (tl::g_lastOk > 0) {

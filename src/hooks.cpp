@@ -58,6 +58,24 @@ class $modify(TLLevelInfoLayer, LevelInfoLayer) {
 				lbl->setPosition({ win.width / 2, 14.f });
 				lbl->limitLabelWidth(win.width - 40.f, 0.5f, 0.1f);
 				layer->addChild(lbl, 10);
+				// the game's own extreme demon face next to the rank, and a check mark once you've beaten it
+				float lw = lbl->getScaledContentSize().width;
+				if (auto* face = CCSprite::createWithSpriteFrameName("diffIcon_10_btn_001.png")) {
+					float fh = face->getContentSize().height;
+					if (fh > 0.f) face->setScale(24.f / fh);
+					face->setPosition({ win.width / 2 - lw / 2 - 15.f, 14.f });
+					face->setID("tl-badge-face"_spr);
+					layer->addChild(face, 10);
+				}
+				if (tl::linked() && best >= 100) {
+					if (auto* chk = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png")) {
+						float ch = chk->getContentSize().height;
+						if (ch > 0.f) chk->setScale(18.f / ch);
+						chk->setPosition({ win.width / 2 + lw / 2 + 14.f, 14.f });
+						chk->setID("tl-badge-check"_spr);
+						layer->addChild(chk, 10);
+					}
+				}
 			}
 
 			if (!layer->getChildByID("tl-level-button"_spr)) {
