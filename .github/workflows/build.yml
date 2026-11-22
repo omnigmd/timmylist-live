@@ -6,6 +6,9 @@ on:
     branches:
       - "**"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Windows
@@ -23,3 +26,21 @@ jobs:
         with:
           name: Timmylist Live
           path: ${{ steps.build.outputs.build-output }}
+
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_OUT: ${{ steps.build.outputs.build-output }}
+        run: |
+          $p = $env:BUILD_OUT
+          if (Test-Path -PathType Container $p) {
+            $f = (Get-ChildItem $p -Recurse -Filter *.geode | Select-Object -First 1).FullName
+          } else {
+            $f = $p
+          }
+          Write-Host "Mod file: $f"
+          gh release delete latest --yes --cleanup-tag --repo $env:GITHUB_REPOSITORY
+          $LASTEXITCODE = 0
+          gh release create latest $f --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Timmylist Live" --notes "Drop the .geode file into your Geode mods folder, then paste your link code in the mod settings. Get the code in Timmylist Settings, Connected Accounts, Geometry Dash."
