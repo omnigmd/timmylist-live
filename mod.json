@@ -5,7 +5,7 @@
 	},
 	"id": "omnigmd.timmylist-live",
 	"name": "Timmy Tracker",
-	"version": "v2.2.1",
+	"version": "v2.2.2",
 	"developer": "omnigmd",
 	"description": "Tracks your Geometry Dash progress on The Timmylist: sends your best % and completions live, shows a level's rank and points, and adds a pop-up with your whole list.",
 	"tags": [
