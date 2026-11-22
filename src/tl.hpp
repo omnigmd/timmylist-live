@@ -333,4 +333,13 @@ namespace tl {
 	inline std::string where(Info const& in) {
 		return "#" + std::to_string(in.rank) + " " + in.name;
 	}
+
+	// the Timmy Tracker logo, scaled to a height in points (falls back to nothing if the sprite is missing)
+	inline CCSprite* logo(float height) {
+		auto* spr = CCSprite::create("logo.png"_spr);
+		if (!spr) return nullptr;
+		float h = spr->getContentSize().height;
+		if (h > 0.f) spr->setScale(height / h);
+		return spr;
+	}
 }
