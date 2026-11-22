@@ -1,5 +1,5 @@
-# v2.2.2
-- Logo is now the extreme demon face with the game's check mark and the Timmy Tracker name.
+# v2.2.3
+- Logo is the game's green check mark in the Geode style frame.
 
 # v2.2.1
 - New logo: a Geometry Dash style list with demon faces, progress bars and a check mark, in a green frame.
