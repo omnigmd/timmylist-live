@@ -1,4 +1,4 @@
-// Timmylist Live: shared core. Sends your best % and completions on The Timmylist's levels to your Timmylist account,
+// Timmy Tracker: shared core. Sends your best % and completions on The Timmylist's levels to your Timmylist account,
 // keeps the list of levels (name, rank, points) and your progress, and offers it to the pop-up, the badge and the HUD.
 // Everything runs on the main thread. Only levels that are on the list are sent; practice and testmode are ignored.
 #pragma once
@@ -182,7 +182,7 @@ namespace tl {
 		g_fetching = true;
 		auto req = web::WebRequest();
 		req.header("Content-Type", "application/json");
-		req.userAgent("TimmylistLive/2.0");
+		req.userAgent("TimmyTracker/2.0");
 		req.bodyString("{\"a\":\"gdLevels\"}");
 		async::spawn(req.post(serverUrl()), [](web::WebResponse res) {
 			g_fetching = false;
@@ -254,7 +254,7 @@ namespace tl {
 		body += ",\"gd\":{\"n\":\"" + jsonEsc(gdName()) + "\"}}";
 		auto req = web::WebRequest();
 		req.header("Content-Type", "application/json");
-		req.userAgent("TimmylistLive/2.0");
+		req.userAgent("TimmyTracker/2.0");
 		req.bodyString(body);
 		async::spawn(req.post(serverUrl()), [batch](web::WebResponse res) mutable {
 			g_sending = false;
@@ -263,7 +263,7 @@ namespace tl {
 				applyServer(v);
 				if (!g_greeted) {
 					g_greeted = true;
-					note(g_user.empty() ? "Timmylist Live is linked" : ("Timmylist Live linked to " + g_user), NotificationIcon::Success);
+					note(g_user.empty() ? "Timmy Tracker is linked" : ("Timmy Tracker linked to " + g_user), NotificationIcon::Success);
 				}
 				g_warned = false;
 				if (g_pendingSync) { g_pendingSync = false; syncLocal(); }
@@ -274,7 +274,7 @@ namespace tl {
 			if (res.code() == 401) {
 				if (!g_warned) {
 					g_warned = true;
-					note("Timmylist Live: that link code isn't valid. Make a new one on timmylist.org.", NotificationIcon::Error, true);
+					note("Timmy Tracker: that link code isn't valid. Make a new one on timmylist.org.", NotificationIcon::Error, true);
 				}
 				return;   // a wrong code is not worth retrying
 			}

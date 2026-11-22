@@ -1,4 +1,4 @@
-// Timmylist Live: the game hooks. Main menu button, level page badge, in-level HUD and the progress reporting.
+// Timmy Tracker: the game hooks. Main menu button, level page badge, in-level HUD and the progress reporting.
 #include "tl.hpp"
 #include "popup.hpp"
 
@@ -18,7 +18,7 @@ class $modify(TLMenuLayer, MenuLayer) {
 		if (tl::opt("menu-button")) {
 			auto* menu = this->getChildByID("bottom-menu");
 			if (menu) {
-				auto* spr = CircleButtonSprite::createWithSprite("logo.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [](CCMenuItemSpriteExtra*) {
 					tlOpenPopup();
 				});
@@ -61,7 +61,7 @@ class $modify(TLLevelInfoLayer, LevelInfoLayer) {
 			}
 
 			if (!layer->getChildByID("tl-level-button"_spr)) {
-				auto* spr = CircleButtonSprite::createWithSprite("logo.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [id](CCMenuItemSpriteExtra*) {
 					web::openLinkInBrowser(tl::base() + "/#/level/" + std::to_string(id));
 				});
@@ -155,7 +155,7 @@ namespace tl {
 		hud(pl);
 		if (!linked()) return;
 		report(lv, pct, false);
-		if (opt("best-toast")) note("Timmylist: new best on " + info->name + " - " + std::to_string(pct) + "%", NotificationIcon::Info);
+		if (opt("best-toast")) note("Timmy Tracker: new best on " + info->name + " - " + std::to_string(pct) + "%", NotificationIcon::Info);
 	}
 
 	inline void onComplete(PlayLayer* pl) {
@@ -172,7 +172,7 @@ namespace tl {
 			g_pts += info->pts;
 			g_server[lv] = 100;
 			if (opt("completion-toast")) {
-				std::string t = "Timmylist: " + info->name + " completed!";
+				std::string t = "Timmy Tracker: " + info->name + " completed!";
 				if (info->pts > 0.0) t += " +" + fmtNum(info->pts) + " points";
 				note(t, NotificationIcon::Success);
 			}
