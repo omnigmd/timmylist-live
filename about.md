@@ -1,8 +1,8 @@
-# Timmylist Live
+# Timmy Tracker
 
 <img src="logo.png" width="120">
 
-Your Geometry Dash progress, live on [The Timmylist](https://www.timmylist.org).
+Your Geometry Dash progress, tracked live on [The Timmylist](https://www.timmylist.org).
 
 ## What it does
 

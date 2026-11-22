@@ -4,10 +4,10 @@
 		"win": "*"
 	},
 	"id": "omnigmd.timmylist-live",
-	"name": "Timmylist Live",
+	"name": "Timmy Tracker",
 	"version": "v2.0.0",
 	"developer": "omnigmd",
-	"description": "Live progress for The Timmylist: sends your best % and completions, shows a level's Timmylist rank and points, and adds a Timmylist pop-up with your whole list.",
+	"description": "Tracks your Geometry Dash progress on The Timmylist: sends your best % and completions live, shows a level's rank and points, and adds a pop-up with your whole list.",
 	"tags": [
 		"online",
 		"utility",
@@ -19,7 +19,7 @@
 	},
 	"resources": {
 		"sprites": [
-			"logo.png"
+			"cube.png"
 		]
 	},
 	"settings": {
@@ -56,7 +56,7 @@
 		"menu-button": {
 			"type": "bool",
 			"name": "Main menu button",
-			"description": "Add the Timmylist cube button to the main menu.",
+			"description": "Add the Timmy Tracker cube button to the main menu.",
 			"default": true
 		},
 		"badge": {
