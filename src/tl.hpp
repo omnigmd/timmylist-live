@@ -295,9 +295,7 @@ namespace tl {
 		auto* glm = GameLevelManager::sharedState();
 		if (!glm || !glm->m_onlineLevels || !g_haveIds) return 0;
 		int n = 0;
-		CCDictElement* el = nullptr;
-		CCDICT_FOREACH(glm->m_onlineLevels, el) {
-			auto* lvl = static_cast<GJGameLevel*>(el->getObject());
+		for (auto [key, lvl] : CCDictionaryExt<gd::string, GJGameLevel*>(glm->m_onlineLevels)) {
 			if (!lvl) continue;
 			int id = lvl->m_levelID.value();
 			if (!g_at.count(id)) continue;
