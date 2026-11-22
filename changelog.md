@@ -1,3 +1,6 @@
+# v2.2.1
+- New logo: a Geometry Dash style list with demon faces, progress bars and a check mark, in a green frame.
+
 # v2.2.0
 - Uses the game's own art: the level progress bar sprite for every bar, extreme demon faces on each row, and the green check mark on levels you've beaten.
 - The level page badge shows the demon face next to the rank, and a check mark once you've completed it.
