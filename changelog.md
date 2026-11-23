@@ -1,3 +1,8 @@
+# v2.3.0
+- Replays: the mod records your clicks on Timmylist levels, and when you beat one the run is saved. Watch it back in the game from the level page or the green play button in the Timmy Tracker list. Turn it off with "Record replays" in the settings.
+- New main menu button: the blue and green circle with the game's check mark, also used on the level page.
+- The list in the pop-up now uses the game's own brown list cells.
+
 # v2.2.3
 - Logo is the game's green check mark in the Geode style frame.
 

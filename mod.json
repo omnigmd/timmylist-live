@@ -5,7 +5,7 @@
 	},
 	"id": "omnigmd.timmylist-live",
 	"name": "Timmy Tracker",
-	"version": "v2.2.3",
+	"version": "v2.3.0",
 	"developer": "omnigmd",
 	"description": "Tracks your Geometry Dash progress on The Timmylist: sends your best % and completions live, shows a level's rank and points, and adds a pop-up with your whole list.",
 	"tags": [
@@ -25,7 +25,8 @@
 	"resources": {
 		"sprites": [
 			"cube.png",
-			"logo.png"
+			"logo.png",
+			"menu.png"
 		]
 	},
 	"settings": {
@@ -112,6 +113,12 @@
 			"default": 0.5,
 			"min": 0.1,
 			"max": 1.0
+		},
+		"record-replays": {
+			"type": "bool",
+			"name": "Record replays",
+			"description": "Record your clicks on Timmylist levels. When you beat one, the run is saved so you can watch it again from the level page or the Timmy Tracker list. Only your latest completion of each level is kept.",
+			"default": true
 		},
 		"title-adv": {
 			"type": "title",
