@@ -335,11 +335,14 @@ namespace tl {
 	}
 
 	// the Timmy Tracker logo, scaled to a height in points (falls back to nothing if the sprite is missing)
-	inline CCSprite* logo(float height) {
-		auto* spr = CCSprite::create("logo.png"_spr);
+	inline CCSprite* image(std::string const& name, float height) {
+		auto* spr = CCSprite::create(name.c_str());
 		if (!spr) return nullptr;
 		float h = spr->getContentSize().height;
 		if (h > 0.f) spr->setScale(height / h);
 		return spr;
+	}
+	inline CCSprite* logo(float height) {
+		return image("logo.png"_spr, height);
 	}
 }

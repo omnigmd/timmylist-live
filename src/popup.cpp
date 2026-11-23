@@ -1,6 +1,7 @@
 // The Timmy Tracker pop-up: link status, your progress and every level on the list with your best %.
 #include "tl.hpp"
 #include "popup.hpp"
+#include "replay.hpp"
 
 #include <Geode/ui/Popup.hpp>
 #include <Geode/ui/ScrollLayer.hpp>
@@ -46,7 +47,8 @@ protected:
 				"- Only levels on the list are sent. Practice mode and testmode are ignored.\n"
 				"- Progress made offline is saved and sent the next time the game is open.\n"
 				"- **Sync** sends the best % you already had, so earlier progress is not lost.\n"
-				"- Tap a level in the list to open it.",
+				"- Tap a level in the list to open it.\n"
+					"- Beat a level and your run is saved. Tap the green play button on its row or on its level page to watch it back.",
 				"OK"
 			)->show();
 		});
@@ -190,14 +192,15 @@ protected:
 	CCNode* makeRow(tl::Info const& in, float w, int index) {
 		int best = tl::bestFor(in.id);
 		bool done = best >= 100;
-		float h = 28.f;
+		float h = 30.f;
 
 		auto menu = CCMenu::create();
 		menu->setContentSize({ w, h });
 		menu->ignoreAnchorPointForPosition(false);
 		menu->setPosition({ 0.f, 0.f });
 
-		auto bg = CCLayerColor::create(ccc4(0, 0, 0, index % 2 == 0 ? 95 : 60), w, h);
+		// the game's own list cell colours
+		auto bg = CCLayerColor::create(index % 2 == 0 ? ccc4(194, 114, 62, 255) : ccc4(161, 88, 44, 255), w, h);
 		bg->setPosition({ 0.f, 0.f });
 		menu->addChild(bg);
 
@@ -220,7 +223,7 @@ protected:
 		auto name = CCLabelBMFont::create(in.name.c_str(), "bigFont.fnt");
 		name->setAnchorPoint({ 0.f, 0.5f });
 		name->setPosition({ 74.f, h / 2 });
-		name->limitLabelWidth(w - 74.f - 156.f, 0.4f, 0.1f);
+		name->limitLabelWidth(w - 74.f - 178.f, 0.4f, 0.1f);
 		menu->addChild(name);
 
 		// progress bar, with the game's check mark in front of it once the level is beaten
@@ -240,19 +243,40 @@ protected:
 		pct->setScale(0.4f);
 		pct->setAnchorPoint({ 1.f, 0.5f });
 		pct->setPosition({ w - 8.f, h / 2 });
-		pct->setColor(done ? ccc3(130, 255, 170) : (best > 0 ? ccc3(255, 255, 255) : ccc3(150, 160, 190)));
+		pct->setColor(done ? ccc3(170, 255, 190) : (best > 0 ? ccc3(255, 255, 255) : ccc3(255, 235, 215)));
 		menu->addChild(pct);
 
 		int id = in.id;
-		auto hit = CCNode::create();
-		hit->setContentSize({ w, h });
-		hit->setAnchorPoint({ 0.5f, 0.5f });
-		auto btn = CCMenuItemExt::createSpriteExtra(hit, [id](CCMenuItemSpriteExtra*) {
-			TLPopup::openLevel(id);
-		});
-		btn->m_animationEnabled = false;
-		btn->setPosition({ w / 2, h / 2 });
-		menu->addChild(btn);
+		// a green play button once a run is saved for this level
+		bool hasReplay = tl::rp::exists(id);
+		float rx = bx - 36.f;
+		if (hasReplay) {
+			if (auto play = frameIcon("GJ_playBtn2_001.png", 20.f)) {
+				auto rb = CCMenuItemExt::createSpriteExtra(play, [id](CCMenuItemSpriteExtra*) {
+					tl::rp::watch(id);
+				});
+				rb->setPosition({ rx, h / 2 });
+				menu->addChild(rb);
+			}
+		}
+		// the rest of the row opens the level
+		auto addHit = [&](float x0, float x1) {
+			if (x1 - x0 < 4.f) return;
+			auto hit = CCNode::create();
+			hit->setContentSize({ x1 - x0, h });
+			hit->setAnchorPoint({ 0.5f, 0.5f });
+			auto btn = CCMenuItemExt::createSpriteExtra(hit, [id](CCMenuItemSpriteExtra*) {
+				TLPopup::openLevel(id);
+			});
+			btn->m_animationEnabled = false;
+			btn->setPosition({ (x0 + x1) / 2, h / 2 });
+			menu->addChild(btn);
+		};
+		if (hasReplay) {
+			addHit(0.f, rx - 14.f);
+			addHit(rx + 14.f, w);
+		}
+		else addHit(0.f, w);
 		return menu;
 	}
 

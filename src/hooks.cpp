@@ -1,10 +1,12 @@
 // Timmy Tracker: the game hooks. Main menu button, level page badge, in-level HUD and the progress reporting.
 #include "tl.hpp"
 #include "popup.hpp"
+#include "replay.hpp"
 
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/GJBaseGameLayer.hpp>
 
 $on_mod(Loaded) {
 	tl::loadQueue();
@@ -18,7 +20,9 @@ class $modify(TLMenuLayer, MenuLayer) {
 		if (tl::opt("menu-button")) {
 			auto* menu = this->getChildByID("bottom-menu");
 			if (menu) {
-				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				// our own menu button art (blue-green circle with the green check); the old cube button if it is missing
+				CCNode* spr = tl::image("menu.png"_spr, 50.f);
+				if (!spr) spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 1.f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [](CCMenuItemSpriteExtra*) {
 					tlOpenPopup();
 				});
@@ -79,7 +83,8 @@ class $modify(TLLevelInfoLayer, LevelInfoLayer) {
 			}
 
 			if (!layer->getChildByID("tl-level-button"_spr)) {
-				auto* spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
+				CCNode* spr = tl::image("menu.png"_spr, 44.f);
+				if (!spr) spr = CircleButtonSprite::createWithSprite("cube.png"_spr, 0.9f, CircleBaseColor::Blue, CircleBaseSize::Medium);
 				auto* btn = CCMenuItemExt::createSpriteExtra(spr, [id](CCMenuItemSpriteExtra*) {
 					web::openLinkInBrowser(tl::base() + "/#/level/" + std::to_string(id));
 				});
@@ -93,6 +98,19 @@ class $modify(TLLevelInfoLayer, LevelInfoLayer) {
 					menu->setPosition({ 30.f, win.height / 2 });
 					menu->addChild(btn);
 					layer->addChild(menu, 10);
+				}
+			}
+
+			// watch your saved run of this level, once you have beaten it with the mod running
+			if (tl::rp::exists(id) && !layer->getChildByID("tl-replay-button"_spr)) {
+				CCNode* rspr = CircleButtonSprite::createWithSpriteFrameName("GJ_playBtn2_001.png", 0.45f, CircleBaseColor::Green, CircleBaseSize::Medium);
+				auto* rbtn = CCMenuItemExt::createSpriteExtra(rspr, [id](CCMenuItemSpriteExtra*) {
+					tl::rp::watch(id);
+				});
+				rbtn->setID("tl-replay-button"_spr);
+				if (auto* side = layer->getChildByID("left-side-menu")) {
+					side->addChild(rbtn);
+					side->updateLayout();
 				}
 			}
 		});
@@ -203,7 +221,18 @@ class $modify(TLPlayLayer, PlayLayer) {
 	bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
 		if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 		tl::onOpen(this, level);
+		tl::rp::onOpen(this);
 		return true;
+	}
+
+	void resetLevel() {
+		PlayLayer::resetLevel();
+		tl::rp::onReset(this);
+	}
+
+	void onQuit() {
+		tl::rp::onQuit();
+		PlayLayer::onQuit();
 	}
 
 	void destroyPlayer(PlayerObject* player, GameObject* object) {
@@ -214,6 +243,36 @@ class $modify(TLPlayLayer, PlayLayer) {
 
 	void levelComplete() {
 		PlayLayer::levelComplete();
-		tl::onComplete(this);
+		if (!tl::rp::g_playing) tl::onComplete(this);
+		tl::rp::onComplete(this);
+	}
+};
+
+// ---------------- replay: record your clicks, play them back ----------------
+class $modify(TLBaseLayer, GJBaseGameLayer) {
+	void handleButton(bool down, int button, bool isPlayer1) {
+		auto* pl = PlayLayer::get();
+		bool mine = pl && static_cast<GJBaseGameLayer*>(pl) == this;
+		if (mine && tl::rp::g_playing) {
+			// during a replay only our own clicks go through
+			if (!tl::rp::g_inject) return;
+		}
+		else if (mine) tl::rp::record(this, down, button, isPlayer1);
+		GJBaseGameLayer::handleButton(down, button, isPlayer1);
+	}
+
+	void processCommands(float dt, bool isHalfTick, bool isLastTick) {
+		auto* pl = PlayLayer::get();
+		if (tl::rp::g_playing && pl && static_cast<GJBaseGameLayer*>(pl) == this) {
+			unsigned int cur = m_gameState.m_currentProgress;
+			while (tl::rp::g_idx < tl::rp::g_play.size() && tl::rp::g_play[tl::rp::g_idx].step <= cur) {
+				auto e = tl::rp::g_play[tl::rp::g_idx];
+				++tl::rp::g_idx;
+				tl::rp::g_inject = true;
+				this->handleButton(e.down, e.button, e.p1);
+				tl::rp::g_inject = false;
+			}
+		}
+		GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
 	}
 };
